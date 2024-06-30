@@ -1,0 +1,92 @@
+Program require install
+1.Burp Suite
+2.Nox
+3.Mitmproxy
+4.adb
+5.frida-server
+
+
+Setup : nox
+	root > development setup to apply usb debug
+	install cercificate to nox > setting > search cer (cer from mitm)
+
+	last step : setting wifi proxy to > ip and port
+
+
+Setup : adb and frida
+install adb devices and setting edit the system environment > path > adb
+	adb push frida-server /data/local/tmp/
+	adb shell
+	whoami
+	cd /data/local/tmp/
+	ls
+	chmod 777 frida-server
+	./frida-server
+
+next step :
+	frida-ps -Ua
+	objection --gadget com.wisdom.unlockr.app explore
+	android sslpinning disable
+
+
+
+Setup : Burp Suite
+proxy setting > all interface 8888
+
+
+
+
+
+Setup : Mitmproxy
+Bypassing SSL Pinning via MITM
+Some applications traffic can not be captured via burp suite directly in such cases MITM comes into the picture. Instead of capturing the traffic via burp suite, we can use MITM to capture traffic and then send it to the burp suite using MITM. MITM can also be used with the objection, Frida script, and other tools.It works many times, in one of my projects I tried a lot to bypass SSL pinning but nothing worked then at the end with one Frida script and MITM, I was able to capture the traffic.
+
+1.Install mitmproxy via the following command in MacBook
+brew install mitmproxy
+
+2. Download the MITM certificate in the android phone > set proxy use a proxy server : http://localhost:8081
+
+3. Connect the device and Macbook via USB and Enter the below command or set the proxy in android device
+
+mitmproxy
+
+
+4. Enter the below command in the android device browser
+
+Mitm.it (Download the Android certificate)
+
+
+5. Install the MITM certificate on the android phone
+
+In android phone navigate to Setting => Install from device storage=> CA Certificate => install
+
+6. Enter the below command to start the mitmproxy in the Browser.
+
+mitmweb (mitm get open in the browser automatically)
+
+
+7. Setup MITMProxy for forwarding traffic from the MITM to the burp suite.
+
+8. Enter the below command
+
+mitmweb
+command to change port : mitmweb --listen-port 8081
+
+9. Go to the option and click on “Edit Options” and click on “set this configuration”
+
+
+10. Search for mode and add the following line there
+
+upstream:http://127.0.0.1:8888
+
+
+11. Search for ssl_insecure and enable it
+
+
+12. Set proxy in burp suite.
+
+Set the IP address and port no in the burp suite which you have set for the upstream in mode option.
+
+13. Start browsing the application from android phone and observe that the traffic will be captured in the burp suite.
+
+Remark *** set port on burp suite to : all interface : 8888
